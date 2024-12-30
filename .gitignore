@@ -1,0 +1,9 @@
+emails.json
+token.pickle
+src/.env
+src/emails.json
+src/neo4j.txt 
+src/token.pickle
+src/cypher_generator.py
+src/credentials.json
+src/_pycache_

@@ -1,0 +1,11 @@
+os 
+pickle 
+datetime 
+json
+google.auth.transport
+google_auth_oauthlib
+googleapiclient
+openai
+neo4j
+langchain_community
+dotenv
