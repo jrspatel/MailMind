@@ -40,3 +40,7 @@ Enhance summarization to include:
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/Personalized-AI-Gmail.git
+
+## Improvements actively pursuing 
+- Implementing a hybrid approach combining semantic and syntactic search to enhance the quality of generated outputs.
+- Exploring the integration of scraping techniques to retrieve email data after API fetching, with a focus on preventing any data loss.
