@@ -78,7 +78,7 @@ def load_json_to_neo4j(json_file_path, driver):
             session.write_transaction(insert_email, email)
     print('data loaded successfully')
 
-json_file_path = 'D:\GMAIL\emails.json'
+json_file_path = 'D:/MAILMIND/emails.json'
 load_json_to_neo4j(json_file_path, driver)
 
 # try:

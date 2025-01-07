@@ -136,4 +136,5 @@ response = client_chunk.generate.near_text(
     grouped_task="Summarize this email thread"
 )
 
+print(" ********************** Request fulfilled using weaviate vector store **************")
 print(response.generated)

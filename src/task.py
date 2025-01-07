@@ -71,6 +71,8 @@ prompt = 'summarize the emails where the sender is "Google Store <googlestore-no
 cypher_query = prompt_to_query(user_prompt=prompt, schema=gr_schema, api_key=openai_api_key)
 print("*********** CYPHER QUERY GENERATED ****************")
 email_threads = fetch_emails_from_neo4j(driver=driver, cypher_query=cypher_query)
+
+
 print('*********** THE DATA FETCHED FROM THE DATABASE ****************')
 summary = summarize_thread_with_openai(email_threads)
 
