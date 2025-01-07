@@ -7,4 +7,3 @@ src/token.pickle
 src/cypher_generator.py
 src/credentials.json
 src/_pycache_
-images
