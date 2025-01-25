@@ -34,18 +34,37 @@ def summarize_thread_with_openai(thread_emails):
     response = openai.chat.completions.create(
         model="gpt-3.5-turbo",  
         messages=[
-            {"role": "system", "content": "You are an assistant that summarizes email threads."},
-            {"role": "user", "content": f"Summarize the following email thread:\n\n{thread_emails}"}
+            {"role": "system", "content": "You are a sophisticated assistant designed to assist with emails by summarizing content, retrieving relevant information, generating responses, and automating workflows." 
+                                         "Your actions are based on the specific use-case requirements provided, focusing on accuracy, context-awareness, and efficiency."},
+            {"role": "user", "content": f"Summarize the following message\n\n{thread_emails}"}
         ],
         max_tokens=100,
         temperature=0.7
     )
 
-    print(response)
+    # print(response)
     summary = response.choices[0].message.content.strip()
     return summary
 
-def fetch_emails_from_neo4j(driver, cypher_query):
+
+
+def regenerate_query_with_error(orginal_query, error_trace, schema):
+    """
+        A function which regenerates a cypher query based on the error trace
+    """
+
+    prompt = f"""
+                The following Cypher query failed with this error trace: "{error_trace}". 
+                Here's the original query: "{orginal_query}". 
+                Please modify the query to correct the error and make it syntactically valid.
+        """
+        # Here, call your AI model to regenerate the query or apply logic to fix it.
+    regenerated_query = prompt_to_query(prompt, gr_schema, api_key=openai_api_key)  # Assuming send_to_prompt is a function that handles prompt submission.
+    return regenerated_query
+
+
+
+def fetch_emails_from_neo4j(driver, cypher_query, retries_left, gr_schema):
     """
     Execute a Cypher query and fetch email data from Neo4j.
     Args:
@@ -55,22 +74,38 @@ def fetch_emails_from_neo4j(driver, cypher_query):
     Returns:
         list: List of email dictionaries.
     """
-    with driver.session() as session:
-        result = session.run(cypher_query)
-        # @verify the result
-        # print(result)
-        emails = []
-        for record in result:
-            # print("sample from the records fetched from the database: ", record)
-            emails.append(record) 
-        # print(emails)
-        return emails
 
-prompt = 'summarize the emails where the sender is "Google Store <googlestore-noreply@google.com>"' 
+    try:
+        with driver.session() as session:
+            result = session.run(cypher_query)
+            emails = []
+            for record in result:
+                # print("sample from the records fetched from the database: ", record)
+                emails.append(record) 
+            # print(emails)
+            return emails
+    except Exception as e:
+        trace = str(e) 
+        print(f"Executing the error messgae: {trace}") 
+        if retries_left>0:
+            regenerate_query = regenerate_query_with_error(cypher_query, trace, schema=gr_schema) 
+
+            print(f"Executing the re-generated query: {regenerate_query}") 
+            return fetch_emails_from_neo4j(driver= driver, cypher_query= regenerate_query, retries_left= retries_left - 1, gr_schema = gr_schema) 
+        else :
+            # if retries maxed out 
+            print(" No retries left !!")
+            return []
+
+        
+
+# prompt = 'summarize the emails where the sender is "Google Store <googlestore-noreply@google.com>"' 
+
+prompt = 'summarize the emails i got yesterday'
 
 cypher_query = prompt_to_query(user_prompt=prompt, schema=gr_schema, api_key=openai_api_key)
 print("*********** CYPHER QUERY GENERATED ****************")
-email_threads = fetch_emails_from_neo4j(driver=driver, cypher_query=cypher_query)
+email_threads = fetch_emails_from_neo4j(driver=driver, cypher_query=cypher_query, retries_left= 2, gr_schema= gr_schema)
 
 
 print('*********** THE DATA FETCHED FROM THE DATABASE ****************')

@@ -47,6 +47,9 @@ Enhance summarization to include:
 ![Vector Search](https://github.com/jrspatel/MailMind/blob/main/images/Screenshot%202025-01-06%20232420-%20weaviate.png)
 
 ## Improvements actively pursuing 
-- Implementing a hybrid approach combining semantic and syntactic search to enhance the quality of generated outputs.
-- Measuring the accuracy of cypher generation.
+- Measuring the accuracy of cypher generation by the model and handling incorrect queries. 
+- handling the some inconsistences with the weviate retrieval.
+
 - Exploring the integration of scraping techniques to retrieve email data after API fetching, with a focus on preventing any data loss.
+
+- Prompt Evaluation.

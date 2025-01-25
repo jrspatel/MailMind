@@ -38,6 +38,9 @@ def insert_email(tx, email):
 
     sentiment = analyze_sentiment(email['snippet'])
     print(sentiment)
+    
+    print("email sender :", email['sender'])
+
     query = """
         MERGE (sender:Person {email: $sender})
         MERGE (receiver:Person {email: $receiver})
@@ -73,7 +76,7 @@ def load_json_to_neo4j(json_file_path, driver):
     # insert the data 
     with driver.session() as session:
         for email in email_data:
-            print(email) 
+            # print(email) 
             
             session.write_transaction(insert_email, email)
     print('data loaded successfully')

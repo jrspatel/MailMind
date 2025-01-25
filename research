@@ -1,0 +1,90 @@
+1. Email Management
+Users may ask for tasks related to organizing, summarizing, or interacting with their emails:
+
+Summarization:
+"Summarize the last 10 emails in my inbox."
+"Give me a brief overview of today's emails."
+Prioritization:
+"What are the most important emails in my inbox?"
+"Show unread emails from my manager."
+Categorization:
+"Organize my emails into Work, Personal, and Promotions categories."
+"Group emails by subject or sender."
+2. Search and Retrieval
+Users may request specific information from their emails:
+
+Keyword Search:
+"Find all emails containing 'project deadline.'"
+"Search for emails with attachments about 'budget report.'"
+Sender-Based Search:
+"Show all emails from [sender]."
+"Retrieve emails from [sender] with attachments."
+Date-Based Search:
+"Find emails received in the last week."
+"Show emails sent on January 5th."
+3. Insights and Analytics
+Users may ask for actionable insights:
+
+"Analyze my email trends: How many emails do I receive daily?"
+"Identify emails with overdue tasks or reminders."
+"Highlight recurring topics in my inbox."
+4. Automated Actions
+Users may request automated tasks:
+
+"Draft a reply to the email from [sender] about [topic]."
+"Mark all emails from [domain] as read."
+"Move promotional emails to the 'Promotions' folder."
+5. Notifications and Reminders
+Users may seek proactive updates:
+
+"Notify me if I get an email about [specific topic]."
+"Set a reminder for the email about [task or meeting]."
+"Alert me when I receive an email from [specific sender]."
+6. Custom Filters and Organization
+Users might ask for tailored email organization:
+
+"Create a filter for all emails containing 'invoice.'"
+"Automatically label emails from [sender] as 'Priority.'"
+"Archive all emails older than six months."
+7. Email Content Generation
+Users may ask for help drafting emails:
+
+"Write a polite reply declining the meeting invitation."
+"Draft an email following up on a project update."
+"Create a professional email requesting feedback on [topic]."
+8. Data Extraction
+Users may want specific details extracted:
+
+"Extract phone numbers from my emails."
+"List all email addresses mentioned in my inbox."
+"Find emails containing links and summarize them."
+9. Sentiment Analysis
+Users may inquire about the tone of their emails:
+
+"Analyze the tone of my recent email to [recipient]."
+"Identify any negative emails in my inbox."
+"What is the sentiment of the email from [sender]?"
+10. Security and Privacy
+Users may ask for help managing security:
+
+"Identify any emails that look like phishing attempts."
+"List all emails with suspicious attachments."
+"Search for emails requesting sensitive information."
+11. Attachments
+Users may request information or actions on attachments:
+
+"List all emails with PDF attachments."
+"Show the most recent email with an attachment."
+"Download attachments from emails related to [topic]."
+12. Cleanup and Maintenance
+Users may ask to declutter their inbox:
+
+"Delete all promotional emails older than a month."
+"Archive emails with the subject line '[keyword].'"
+"Unsubscribe from newsletters I never open."
+13. Collaboration and Sharing
+Users may request collaborative features:
+
+"Forward the email from [sender] to [recipient]."
+"Share all emails related to [project] with my team."
+"Collaboratively annotate the email about [topic]."

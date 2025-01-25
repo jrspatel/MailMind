@@ -110,8 +110,8 @@ client_chunk = client.collections.create(
             data_type=wvc.config.DataType.TEXT  # The actual chunk of text
         )
     ],
-    vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_openai(),  # OpenAI text vectorization
-    generative_config=wvc.config.Configure.Generative.openai()           # Generative config for OpenAI
+    vectorizer_config = wvc.config.Configure.Vectorizer.text2vec_openai(),  # OpenAI text vectorization
+    generative_config = wvc.config.Configure.Generative.openai()           # Generative config for OpenAI
 )
 
 
@@ -131,9 +131,9 @@ response = client_chunk.aggregate.over_all(total_count=True)
 print(response.total_count)
 
 response = client_chunk.generate.near_text(
-    query='emails where the sender is "Google Store <googlestore-noreply@google.com>"',
+    query='Summarize the emails I received on [yesterday\'s date - 1/13/2025], if there are any. Include the timestamp of the email.',
     limit=2,
-    grouped_task="Summarize this email thread"
+    grouped_task="if there are no emails, give a clear message, Summarize this message"
 )
 
 print(" ********************** Request fulfilled using weaviate vector store **************")
