@@ -131,7 +131,7 @@ response = client_chunk.aggregate.over_all(total_count=True)
 print(response.total_count)
 
 response = client_chunk.generate.near_text(
-    query='Summarize the emails I received on [yesterday\'s date - 1/13/2025], if there are any. Include the timestamp of the email.',
+    query='Summarize the emails I received on [yesterday\'s date - 1/24/2025], if there are any. Include the timestamp of the email.',
     limit=2,
     grouped_task="if there are no emails, give a clear message, Summarize this message"
 )

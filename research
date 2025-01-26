@@ -10,6 +10,7 @@ Prioritization:
 Categorization:
 "Organize my emails into Work, Personal, and Promotions categories."
 "Group emails by subject or sender."
+
 2. Search and Retrieval
 Users may request specific information from their emails:
 
@@ -22,12 +23,14 @@ Sender-Based Search:
 Date-Based Search:
 "Find emails received in the last week."
 "Show emails sent on January 5th."
+
 3. Insights and Analytics
 Users may ask for actionable insights:
 
 "Analyze my email trends: How many emails do I receive daily?"
 "Identify emails with overdue tasks or reminders."
 "Highlight recurring topics in my inbox."
+
 4. Automated Actions
 Users may request automated tasks:
 

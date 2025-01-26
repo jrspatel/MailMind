@@ -5,6 +5,7 @@ from langchain_community.graphs import Neo4jGraph
 from dotenv import load_dotenv
 import os
 import openai
+import numpy as np
 load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -96,12 +97,39 @@ def fetch_emails_from_neo4j(driver, cypher_query, retries_left, gr_schema):
             # if retries maxed out 
             print(" No retries left !!")
             return []
-
         
 
-# prompt = 'summarize the emails where the sender is "Google Store <googlestore-noreply@google.com>"' 
+def evaluation(prompt, response):
+    """
+        converting the user prompt to embeddings - understand the user intent.
+        convert the response into embeddings.
 
-prompt = 'summarize the emails i got yesterday'
+        calculate the simmilartiy between these embeddings.
+    """
+    prompt_embed = openai.embeddings.create(
+        input= prompt,
+        model= "text-embedding-3-small"
+    ).data[0].embedding
+    
+    response_embed = openai.embeddings.create(
+        input= response,
+        model= "text-embedding-3-small"
+    ).data[0].embedding
+    
+    prompt_vector = np.array(prompt_embed)
+    response_vector = np.array(response_embed)
+
+    # Calculate cosine similarity
+    similarity = np.dot(prompt_vector, response_vector) / (
+        np.linalg.norm(prompt_vector) * np.linalg.norm(response_vector)
+    )
+
+    print(similarity)
+
+
+prompt = 'summarize the emails where the sender is "Google Store <googlestore-noreply@google.com>"' 
+
+#prompt = 'summarize the emails i got yesterday {2025-1-24}'
 
 cypher_query = prompt_to_query(user_prompt=prompt, schema=gr_schema, api_key=openai_api_key)
 print("*********** CYPHER QUERY GENERATED ****************")
@@ -112,3 +140,6 @@ print('*********** THE DATA FETCHED FROM THE DATABASE ****************')
 summary = summarize_thread_with_openai(email_threads)
 
 print("Thread Summary:", summary)
+
+print("********* Evaluation in Progress *******************")
+evaluation(prompt=prompt, response= summary)
