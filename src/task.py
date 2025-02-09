@@ -57,6 +57,7 @@ def regenerate_query_with_error(orginal_query, error_trace, schema):
     prompt = f"""
                 The following Cypher query failed with this error trace: "{error_trace}". 
                 Here's the original query: "{orginal_query}". 
+                The schema of the database: "{schema}".
                 Please modify the query to correct the error and make it syntactically valid.
         """
         # Here, call your AI model to regenerate the query or apply logic to fix it.
@@ -79,12 +80,30 @@ def fetch_emails_from_neo4j(driver, cypher_query, retries_left, gr_schema):
     try:
         with driver.session() as session:
             result = session.run(cypher_query)
+            print(result)
             emails = []
             for record in result:
                 # print("sample from the records fetched from the database: ", record)
                 emails.append(record) 
-            # print(emails)
-            return emails
+            print(emails)
+            
+
+            if emails == []:
+                print("No emails found. Regenerating query.")
+                regenerate_query = regenerate_query_with_error(cypher_query, "No emails found.", schema=gr_schema)
+                print(f"Executing the re-generated query: {regenerate_query}") 
+                if retries_left>0:
+                    regenerate_query = regenerate_query_with_error(cypher_query, trace, schema=gr_schema) 
+
+                    print(f"Executing the re-generated query: {regenerate_query}") 
+                    return fetch_emails_from_neo4j(driver= driver, cypher_query= regenerate_query, retries_left= retries_left - 1, gr_schema = gr_schema) 
+                else :
+                    # if retries maxed out 
+                    print(" No retries left !!")
+                    return []
+        
+        return emails
+
     except Exception as e:
         trace = str(e) 
         print(f"Executing the error messgae: {trace}") 
@@ -127,19 +146,32 @@ def evaluation(prompt, response):
     print(similarity)
 
 
-prompt = 'summarize the emails where the sender is "Google Store <googlestore-noreply@google.com>"' 
+prompt = 'summarize the emails where the sender is "Googjole Store <googlestore-noreply@google.com>" nnihi' 
 
 #prompt = 'summarize the emails i got yesterday {2025-1-24}'
 
-cypher_query = prompt_to_query(user_prompt=prompt, schema=gr_schema, api_key=openai_api_key)
-print("*********** CYPHER QUERY GENERATED ****************")
-email_threads = fetch_emails_from_neo4j(driver=driver, cypher_query=cypher_query, retries_left= 2, gr_schema= gr_schema)
+# cypher_query = prompt_to_query(user_prompt=prompt, schema=gr_schema, api_key=openai_api_key)
+# print("*********** CYPHER QUERY GENERATED ****************")
+# email_threads = fetch_emails_from_neo4j(driver=driver, cypher_query=cypher_query, retries_left= 2, gr_schema= gr_schema)
 
 
-print('*********** THE DATA FETCHED FROM THE DATABASE ****************')
-summary = summarize_thread_with_openai(email_threads)
+# print('*********** THE DATA FETCHED FROM THE DATABASE ****************')
+# summary = summarize_thread_with_openai(email_threads)
 
-print("Thread Summary:", summary)
+# print("Thread Summary:", summary)
 
-print("********* Evaluation in Progress *******************")
-evaluation(prompt=prompt, response= summary)
+# print("********* Evaluation in Progress *******************")
+# evaluation(prompt=prompt, response= summary) 
+
+from openai import OpenAI
+client = OpenAI()
+
+response = client.images.generate(
+    model="dall-e-3",
+    prompt="a white siamese cat",
+    size="1024x1024",
+    quality="standard",
+    n=1,
+)
+
+print(response.data[0].url)

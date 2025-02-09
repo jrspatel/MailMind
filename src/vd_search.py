@@ -16,7 +16,7 @@ load_dotenv()
 weaviate_url = os.getenv('WEAVIATE_URL')
 weaviate_apikey = os.getenv('WEAVIATE_API_KEY')
 
-embeddings = OpenAIEmbeddings(model='text-embedding-3-large')
+embeddings = OpenAIEmbeddings(model='text-embedding-3-small')
 
 # Initialize Weaviate client
 client = weaviate.connect_to_weaviate_cloud(
@@ -32,46 +32,8 @@ if not client.is_ready():
     print("Weaviate is not ready. Check your credentials or connection.")
     exit()
 
-# Function to create chunks
-def email_chunks(mail):
-    all_chunks = []
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=512,  # Adjust based on your needs
-        chunk_overlap=50,  # Ensure context continuity
-        separators=["\n", ".", " ", ""]
-    )
-    
-    for email in mail:
-        # Combine metadata and content
-        combined_data = (
-            f"Sender: {email['sender']}\n"
-            f"Receiver: {email['receiver']}\n"
-            f"Timestamp: {email['timestamp']}\n"
-            f"Subject: {email['subject']}\n"
-            f"Snippet: {email['snippet']}"
-        )
-        
-        # Split text into chunks
-        email_chunks = text_splitter.split_text(combined_data)
-        
-        # Add chunks directly to the list
-        for chunk in email_chunks:
-            all_chunks.append(chunk)
-    
-    return all_chunks
 
-# Load email data
-with open('D:/MailMind/src/emails.json', 'r') as f:
-    email_data = json.load(f)
-
-# Handle multiple emails
-if isinstance(email_data, list):  # JSON is an array of emails
-    emails = email_data
-else:  # JSON is a single email object
-    emails = [email_data]
-
-chunked_text = email_chunks(emails)
-
+# create the schema for the vector store
 collection_name = 'gmail_chunk' 
 
 if client.collections.exists(collection_name):
@@ -95,7 +57,7 @@ client_chunk = client.collections.create(
         ),
         wvc.config.Property(
             name="timestamp", 
-            data_type=wvc.config.DataType.DATE
+            data_type=wvc.config.DataType.TEXT
         ),
         wvc.config.Property(
             name="snippet", 
@@ -115,25 +77,93 @@ client_chunk = client.collections.create(
 )
 
 
+def email_chunks(mail):
+    """
+        Function to create chunks
+    """
+    all_chunks = []
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=512,
+        chunk_overlap=50,
+        separators=["\n", ".", " ", ""]
+    )
+    
+    for email in mail:
+        sender = email.get("sender", "Unknown")
+        receiver = email.get("receiver", "Unknown")
+        timestamp = email.get("timestamp", "1970-01-01T00:00:00")
+        subject = email.get("subject", "No Subject")
+        snippet = email.get("snippet", "")
+
+        # Split only the snippet into chunks
+        email_snippet_chunks = text_splitter.split_text(snippet)
+
+        # Store each chunk separately while keeping metadata intact
+        for idx, chunk in enumerate(email_snippet_chunks):
+            chunk_object = {
+                "chunk": chunk,
+                "chunk_index": idx,
+                "subject": subject,
+                "sender": sender,
+                "receiver": receiver,
+                "timestamp": timestamp,
+                "snippet": snippet  # Full snippet for reference (can remove if not needed)
+            }
+            all_chunks.append(chunk_object)
+    return all_chunks
+
+
+
+
+
+
+# Load email data
+with open('D:/MailMind/src/emails.json', 'r') as f:
+    email_data = json.load(f)
+
+# Handle multiple emails
+if isinstance(email_data, list):  # JSON is an array of emails
+    emails = email_data
+else:  # JSON is a single email object
+    emails = [email_data]
+
+
+
+chunked_text = email_chunks(emails)
+
+
+
+
 chunks_list = list()
+j=0
 for i, chunk in enumerate(chunked_text):
-     
+    # print("chunk:", chunk)
+    embedding_vector = embeddings.embed_documents([chunk["chunk"]])[0]
+    j+=1
+    # embedding_vector = embeddings.embed_documents([chunk])[0]
     data_properties = {
-        "chunk": chunk,
+        "chunk": chunk['chunk'],
+        "subject": chunk['subject'],
+        "sender": chunk['sender'],
+        "receiver": chunk['receiver'],
+        "timestamp": chunk['timestamp'],
+        "snippet": chunk['snippet'],
         "chunk_index": i
     }
-    data_object = wvc.data.DataObject(properties=data_properties)
-    chunks_list.append(data_object)
+    # data_object = wvc.data.DataObject(properties=data_properties , vector=embedding_vector)
+    
+    client_chunk.data.insert(properties= data_properties , vector= embedding_vector)
 
-client_chunk.data.insert_many(chunks_list)
+
+
 
 response = client_chunk.aggregate.over_all(total_count=True)
-print(response.total_count)
+print(f"Total stored objects: {response.total_count}")
 
 response = client_chunk.generate.near_text(
-    query='Summarize the emails I received on [yesterday\'s date - 1/24/2025], if there are any. Include the timestamp of the email.',
+    query='emails American Express <americanexpress@member.americanexpress.com>',
     limit=2,
-    grouped_task="if there are no emails, give a clear message, Summarize this message"
+    grouped_task="give a clear message, Summarize this message"
 )
 
 print(" ********************** Request fulfilled using weaviate vector store **************")

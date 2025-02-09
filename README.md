@@ -49,8 +49,10 @@ Enhance summarization to include:
 ## Improvements actively pursuing 
 - Measuring the accuracy of cypher generation by the model. 
 - Prompt Evaluation.
+- Visualizing the email relations [neo4j map], probably use image models to     visualize the aspects like count of mails per day, with specific person , marketed mails
 - Date issues with both the generations.
 
+- caching prompt responses for future use.
 - Exploring the integration of scraping techniques to retrieve email data after API fetching, with a focus on preventing any data loss.
 
 
