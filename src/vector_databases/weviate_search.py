@@ -138,8 +138,8 @@ chunks_list = list()
 j=0
 for i, chunk in enumerate(chunked_text):
     # print("chunk:", chunk)
-    embedding_vector = embeddings.embed_documents([chunk["chunk"]])[0]
-    j+=1
+    # embedding_vector = embeddings.embed_documents([chunk["chunk"]])[0]
+    # j+=1
     # embedding_vector = embeddings.embed_documents([chunk])[0]
     data_properties = {
         "chunk": chunk['chunk'],
@@ -152,9 +152,11 @@ for i, chunk in enumerate(chunked_text):
     }
     # data_object = wvc.data.DataObject(properties=data_properties , vector=embedding_vector)
     
-    client_chunk.data.insert(properties= data_properties , vector= embedding_vector)
+    client_chunk.data.insert(properties= data_properties )
 
 
+result = client.collections.get("Gmail_chunk").query.fetch_objects(limit=5)
+print(result)
 
 
 response = client_chunk.aggregate.over_all(total_count=True)
