@@ -7,3 +7,6 @@ src/token.pickle
 src/cypher_generator.py
 src/credentials.json
 src/_pycache_
+src/vector_databases/.dockerignore
+src/vector_databases/compose.yaml
+src/vector_databases/Dockerfile
